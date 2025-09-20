@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { useForm } from 'react-hook-form';
 import Button from './components/Button';
 import FormField from './components/FormField';
@@ -14,25 +16,18 @@ type FormData = {
 type FormModalProps = {
   open: boolean;
   onSubmit: (data: FormData) => void;
-  onClose: () => void;
+  onCancel: () => void;
 };
 
-const FormModal = ({ open, onSubmit, onClose }: FormModalProps) => {
+const FormModal = ({ open, onSubmit, onCancel }: FormModalProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<FormData>({
-    defaultValues: {
-      name: '',
-      email: '',
-      experience: '',
-      github: '',
-    },
-  });
+  } = useForm<FormData>();
 
   return (
-    <Modal className="flex flex-col" open={open} onClose={onClose}>
+    <Modal className="flex flex-col" open={open} onClose={onCancel}>
       <H3 as="h1" className="mb-1">
         신청 폼
       </H3>
@@ -62,11 +57,11 @@ const FormModal = ({ open, onSubmit, onClose }: FormModalProps) => {
         <FormField label="Github 링크" error={errors.github?.message}>
           <FormField.Input
             {...register('github', { required: 'Github 링크를 입력해주세요' })}
-            placeholder="github.com/username"
+            placeholder="https://github.com/username"
           />
         </FormField>
         <div className="mt-6 flex flex-wrap justify-end gap-3">
-          <Button color="secondary" type="button" onClick={onClose}>
+          <Button color="secondary" type="button" onClick={onCancel}>
             취소
           </Button>
           <Button color="primary" type="submit">
@@ -78,4 +73,52 @@ const FormModal = ({ open, onSubmit, onClose }: FormModalProps) => {
   );
 };
 
-export default FormModal;
+export const openFormModal = async () => {
+  return new Promise<FormData | null>((resolve, reject) => {
+    const id = 'root-modal';
+
+    if (document.getElementById(id)) {
+      return reject('form modal is already open');
+    }
+
+    const container = document.createElement('div');
+    container.setAttribute('id', id);
+    document.body.appendChild(container);
+
+    const root = createRoot(container);
+
+    const clear = () => {
+      root.unmount();
+      container.remove();
+    };
+
+    const FormModalHandler = () => {
+      const [open, setOpen] = useState(true);
+
+      useEffect(() => {
+        if (!open) {
+          requestAnimationFrame(clear);
+        }
+      }, [open]);
+
+      const handleSubmit = (data: FormData) => {
+        resolve(data);
+        setOpen(false);
+      };
+
+      const handleCancel = () => {
+        setOpen(false);
+      };
+
+      return (
+        <FormModal
+          open={open}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
+      );
+    };
+
+    root.render(<FormModalHandler />);
+  });
+};

@@ -1,21 +1,23 @@
-import { useState } from 'react';
 import Button from './components/Button';
-import FormModal from './FormModal';
+import { openFormModal } from './FormModal';
 
 const ModalFormPage = () => {
-  /* 여기에 구현해 주세요 */
-  const [open, setOpen] = useState(false);
+  const handleClick = async () => {
+    const result = await openFormModal();
+
+    if (!result) {
+      return;
+    }
+
+    console.log(result);
+    alert('제출에 성공했습니다!');
+  };
 
   return (
     <div className="flex h-screen w-screen">
-      <Button className="m-auto" onClick={() => setOpen(true)}>
+      <Button className="m-auto" onClick={handleClick}>
         신청 폼 작성하기
       </Button>
-      <FormModal
-        open={open}
-        onSubmit={console.log}
-        onClose={() => setOpen(false)}
-      />
     </div>
   );
 };
