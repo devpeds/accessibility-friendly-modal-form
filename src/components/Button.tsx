@@ -15,7 +15,7 @@ const button = cva(
       },
       color: {
         primary: 'bg-blue-500 text-white hover:bg-blue-400',
-        secondary: 'bg-gray-500 text-white hover:bg-gray-400',
+        secondary: 'bg-gray-300 text-black hover:bg-gray-400',
       },
       disabled: {
         true: 'cursor-not-allowed',
