@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useForm } from 'react-hook-form';
 import Button from './components/Button';
@@ -20,6 +20,8 @@ type FormModalProps = {
 };
 
 const FormModal = ({ open, onSubmit, onCancel }: FormModalProps) => {
+  const titleId = useId();
+  const descriptionId = useId();
   const {
     register,
     formState: { errors },
@@ -27,14 +29,25 @@ const FormModal = ({ open, onSubmit, onCancel }: FormModalProps) => {
   } = useForm<FormData>();
 
   return (
-    <Modal className="flex flex-col" open={open} onClose={onCancel}>
-      <H3 as="h1" className="mb-1">
+    <Modal
+      className="flex flex-col"
+      titleId={titleId}
+      descriptionId={descriptionId}
+      open={open}
+      onClose={onCancel}
+    >
+      <H3 as="h1" id={titleId} className="mb-1">
         신청 폼
       </H3>
-      <Body2 className="mb-3 text-gray-600">
+      <Body2 id={descriptionId} className="mb-3 text-gray-600">
         이메일과 FE 연차 등 간단한 정보를 입력해주세요.
       </Body2>
-      <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="space-y-3"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <FormField label="이름/닉네임" error={errors.name?.message}>
           <FormField.Input
             {...register('name', { required: '이름을 입력해주세요' })}

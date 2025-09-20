@@ -5,11 +5,20 @@ import FocusTrap from './FocusTrap';
 type ModalProps = {
   className?: string;
   open: boolean;
+  titleId?: string;
+  descriptionId?: string;
   children: React.ReactNode;
   onClose: () => void;
 };
 
-const Modal = ({ className, open, children, onClose }: ModalProps) => {
+const Modal = ({
+  className,
+  open,
+  titleId,
+  descriptionId,
+  children,
+  onClose,
+}: ModalProps) => {
   const prevActiveElementRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -64,7 +73,9 @@ const Modal = ({ className, open, children, onClose }: ModalProps) => {
             className,
           )}
           role="dialog"
-          tabIndex={-1}
+          aria-modal="true"
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
         >
           {children}
         </div>

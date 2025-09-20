@@ -6,3 +6,26 @@ select {
   background-repeat: no-repeat;
   background-position: right 10px center;
 }
+
+/*
+  prefers-reduced-motion: reduce
+  ----------------------------------------------------------------------------
+  사용자가 시스템 설정에서 '동작 줄이기'를 활성화했을 때,
+  모든 애니메이션과 트랜지션, 부드러운 스크롤을 전역적으로 비활성화합니다.
+  duration을 0이 아닌 0.01ms로 설정하는 이유는 JS의 transitionend/animationend
+  이벤트와의 호환성을 보장하기 위함입니다.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* CSS Transitions 비활성화 */
+    transition-duration: 0.01ms;
+    /* CSS Animations 비활성화 */
+    animation-duration: 0.01ms;
+    /* 무한 반복 애니메이션 중지 (예: 스피너) */
+    animation-iteration-count: 1;
+    /* 부드러운 스크롤 비활성화 */
+    scroll-behavior: auto;
+  }
+}

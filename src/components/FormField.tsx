@@ -18,6 +18,9 @@ type FormFieldProps = {
 
 const FormField = ({ label, className, error, children }: FormFieldProps) => {
   const inputId = useId();
+  const errorId = useId();
+
+  const hasError = Boolean(error);
 
   return (
     <div className={cn('flex flex-col', className)}>
@@ -30,8 +33,12 @@ const FormField = ({ label, className, error, children }: FormFieldProps) => {
           'rounded-md border px-4 py-3 text-md',
           children.props.className,
         ),
+        'aria-invalid': hasError,
+        'aria-describedby': hasError ? errorId : undefined,
       })}
-      <Caption className="mt-1.5 text-red-500">{error}</Caption>
+      <Caption id={errorId} className="mt-1.5 text-red-500">
+        {error}
+      </Caption>
     </div>
   );
 };
@@ -46,7 +53,7 @@ FormField.Select = ({
 }: SelectProps) => {
   return (
     <select {...props} defaultValue={defaultValue ?? ''}>
-      <option value="" disabled hidden>
+      <option value="" disabled>
         {placeholder}
       </option>
       {options.map((option) => (
