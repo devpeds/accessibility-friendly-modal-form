@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { cn } from '../utils';
 import FocusTrap from './FocusTrap';
 
@@ -10,7 +10,28 @@ type ModalProps = {
 };
 
 const Modal = ({ className, open, children, onClose }: ModalProps) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const prevActiveElementRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    prevActiveElementRef.current = document.activeElement as HTMLElement;
+    return () => {
+      prevActiveElementRef.current?.focus();
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
 
   const handleEscape = (event: React.KeyboardEvent) => {
     if (event.key !== 'Escape') return;
@@ -32,7 +53,6 @@ const Modal = ({ className, open, children, onClose }: ModalProps) => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      ref={overlayRef}
       aria-hidden={!open}
       onKeyDown={handleEscape}
       onClick={handleBackdropClick}
